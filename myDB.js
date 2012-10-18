@@ -568,7 +568,7 @@ myDB.prototype.flattenWord = function(str){
 	try{
 		str=decodeURIComponent(str.toLowerCase());
 	}catch(e){
-		str=str.toLowerCase();
+		str=unescape(str.toLowerCase());
 	}
 	var rExps=[
 		{re:/[\xE0-\xE6]/g, ch:'a'},
