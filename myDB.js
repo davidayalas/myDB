@@ -2,7 +2,7 @@
 	IndexedDB abstraction object. You can create several DB or one DB with several stores/tables
 
 	v0.1
-
+ 
 	davixyz@gmail.com
 	http://about.me/david.ayala
 	
