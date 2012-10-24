@@ -345,7 +345,8 @@ myDB.prototype.resultMatch=function(self,result,_query,remove){
 	var found=true;
 	var res = "",type,compare,re=null;
 	for(var k=0,u=_query.length;k<u;k++){
-		if((result.value[_query[k].key] || result.value[_query[k].key].toString().length>0 || _query[k].type=="fulltext") && found){
+		res = (result.value[_query[k].key] || result.value[_query[k].key]==0 || result.value[_query[k].key]==false) ? result.value[_query[k].key].toString() : "";
+		if((res.length>0 || _query[k].type=="fulltext") && found){
 			if(_query[k].type!="fulltext"){
 				res = result.value[_query[k].key].toString().toLowerCase();
 			}
