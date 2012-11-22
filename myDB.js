@@ -161,7 +161,7 @@ myDB.prototype.open = function(cb){
 	self.db = e.target.result;
 
 	if(self.db.version<self.version){
-		var setVrequest = self.db.setVersion(""+self.version);
+		var setVrequest = self.db.setVersion(self.version);
 		setVrequest.onsuccess = function(){
 		  	self.log(self,"version request");
 			var created = false;
