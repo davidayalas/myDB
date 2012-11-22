@@ -63,6 +63,16 @@
 	v0.4
 
 	Some improvements because myDB failed due to some changes in Google Chrome indexedDB api
+
+	---------------------------------------------------------------------------------------------------------
+	v0.4.2
+
+	search over values equal to zero	
+	---------------------------------------------------------------------------------------------------------
+
+	v0.4.3
+
+	little improvements in transactions modes and in upgrading database	
 /************************************************************************************************************
 
 
@@ -91,11 +101,9 @@ function myDB(databasename,stores,version,debug){
 	this.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;  
 	this.re = [];
 	
-	if ('webkitIndexedDB' in window) {
-		window.IDBTransaction = window.webkitIDBTransaction;
-		window.IDBKeyRange = window.webkitIDBKeyRange;
-	}
-	
+	window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+	window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+
 	for(var i=0,z=stores.length;i<z;i++){
 		if(typeof(stores[i])=="string"){
 			this.stores[stores[i]]={};
@@ -142,7 +150,7 @@ myDB.prototype.open = function(cb){
   }
 
   try{	
-	var request = this.indexedDB.open(this.databasename,parseInt(self.version));
+	var request = this.indexedDB.open(this.databasename);
   }catch(e){
 	console.log("Error opening database " + e);
 	return;
@@ -151,8 +159,9 @@ myDB.prototype.open = function(cb){
   request.onsuccess = function(e){
 	self.log(self,"open success")
 	self.db = e.target.result;
+
 	if(self.db.version<self.version){
-		var setVrequest = self.db.setVersion(self.version);
+		var setVrequest = self.db.setVersion(""+self.version);
 		setVrequest.onsuccess = function(){
 		  	self.log(self,"version request");
 			var created = false;
@@ -170,7 +179,7 @@ myDB.prototype.open = function(cb){
 				cb(created);
 			}
 		}
-		setVrequest.onfailure = self.error;
+		setVrequest.onerror = self.error;
 	}else{
 		if(typeof(cb)=="function"){	
 			cb(false);
@@ -234,9 +243,9 @@ myDB.prototype.get = function(param1,param2,param3,remove) {
 	var cb = typeof(param2)=="function"?param2:param3;
 	remove = remove || false;
 
-	var transtype = IDBTransaction.READ_ONLY || "readonly";
+	var transtype = "readonly";
 	if(remove){
-		transtype = IDBTransaction.READ_WRITE || "readwrite";
+		transtype = "readwrite";
 	}
 	
 	var db = self.db;
@@ -486,7 +495,7 @@ myDB.prototype.add = function(param1, param2,param3){
   var data = typeof(param1)=="object"?param1:param2;
   var cb = typeof(param2)=="function"?param2:param3;
   
-  var _store = self.db.transaction([store], IDBTransaction.READ_WRITE).objectStore(store);
+  var _store = self.db.transaction([store], "readwrite").objectStore(store);
   if(!data["myDBid"]){
 	data["myDBid"] = "c"+self.stores[store].myDBid;
   }

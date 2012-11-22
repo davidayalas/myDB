@@ -66,3 +66,12 @@ v0.4
 _____
 
 Some improvements because myDB failed due to some changes in Google Chrome indexedDB api
+
+v0.4.2
+______
+search over values equal to zero	
+
+v0.4.3
+______
+
+little improvements in transactions modes and in opening and upgrading database
